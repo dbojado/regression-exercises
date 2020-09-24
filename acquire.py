@@ -3,6 +3,37 @@ import numpy as np
 import os
 from env import host, username, password
 
+###################### Acquire Telco Churn Data #####################
+
+def get_connection(db, username=username, host=host, password=password):
+    '''
+    This function uses my info from my env file to
+    create a connection url to access the Codeup db.
+    '''
+    return f'mysql+pymysql://{username}:{password}@{host}/{db}'
+
+def new_telco_data():
+    '''
+    This function reads the telco churn data from the Codeup db into a df, 
+    write it to a csv file, and returns the df.
+    '''
+    sql_query =  'SELECT * FROM customers'
+    df = pd.read_sql(sql_query, get_connection('telco_churn'))
+    df.to_csv('telco_churn_df.csv')
+    return df
+
+def get_telco_data(cached=False):
+    '''
+    This function reads in telco churn data from Codeup database if cached == False
+    or if cached == True reads in telco churn df from a csv file, returns df
+    '''
+    if cached or os.path.isfile('telco_churn_df.csv') == False:
+        df = new_telco_data()
+    else:
+        df = pd.read_csv('telco_churn_df.csv', index_col=0)
+    return df
+
+
 
 ###################### Acquire Mall Customers Data #####################
 
