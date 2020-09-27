@@ -7,7 +7,38 @@ from sklearn.model_selection import train_test_split
 from sklearn.impute import SimpleImputer
 
 import acquire 
-from acquire import get_titanic_data, get_iris_data, get_mall_data 
+from acquire import get_titanic_data, get_iris_data, get_mall_data, get_telco_data
+
+
+###################### Telco Churn Data ######################
+
+def prep_telco_data(df):
+    '''
+    Takes the acquired telco churn data, does data prep, and returns 
+    train, test, and validate data splits.
+    '''
+    return train, test, validate
+
+def wrangle_telco():
+    df = get_telco_data()
+    df['total_charges'] = df.total_charges.where((df.tenure != 0),0)
+    df['total_charges'] = df.total_charges.astype(float)
+    train_validate, test = train_test_split(df, test_size=.2, random_state=123)
+    train, validate = train_test_split(train_validate, test_size=.3, random_state=123)
+    return train, validate, test
+
+###################### Prep Mall Data ######################
+
+# modification to code
+def prep_mall_data(df):
+    '''
+    Takes the acquired mall data, does data prep, and returns 
+    train, test, and validate data splits.
+    '''
+    df['is_female'] = (df.gender == 'Female').astype('int')
+    train_and_validate, test = train_test_split(df, test_size=.15, random_state=123)
+    train, validate = train_test_split(train_and_validate, test_size=.15, random_state=123)
+    return train, test, validate
 
 ###################### Prep Iris Data ######################
 
@@ -97,17 +128,3 @@ def prep_titanic(cached=True):
     train, validate, test = impute_mean_age(train, validate, test)
     
     return train, validate, test
-
-
-###################### Prep Mall Data ######################
-
-# modification to code
-def prep_mall_data(df):
-    '''
-    Takes the acquired mall data, does data prep, and returns 
-    train, test, and validate data splits.
-    '''
-    df['is_female'] = (df.gender == 'Female').astype('int')
-    train_and_validate, test = train_test_split(df, test_size=.15, random_state=123)
-    train, validate = train_test_split(train_and_validate, test_size=.15, random_state=123)
-    return train, test, validate
